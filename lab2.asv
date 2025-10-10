@@ -152,21 +152,45 @@ end
 A = [1 2 3; 0 5 6; 0 0 9];
 
 
-function x = forward(L,b)
-    [n,m]
+function x = forward(L, b)
+    [n, m] = size(L);
     [isSq, isLower, isUpper] = checkMatrix(L);
     ok = isInvertible(L);
-    if (isLower && isSq)
-        x(1)=b(1)/L(1,1);
-        for(i=2:n)
-            s=0;
-            for j=1:i-1
-                s= s+L(i,j)*x/j;
+    if isLower && ok
+        x = zeros(n, 1);
+        x(1) = b(1) / L(1, 1);
+        for i = 2:n
+            s = 0;
+            for j = 1:i-1
+                s = s + L(i, j) * x(j);
             end
-            x(i)=b(i)-s;
+            x(i) = (b(i) - s) / L(i, i);
         end
+    else
+        error("superior square matrix with determinant different than 0");
     end
-    x=x(:);
+    x = x(:);
 end
 
-forward([1 0 0;1 -1 0;-2 1 -2],[1 0 -3])
+function x = backward(U, b)
+    [n, m] = size(U);
+    [isSq, isLower, isUpper] = checkMatrix(U);
+    ok = isInvertible(U);
+    if isUpper && ok
+        x = zeros(n, 1);
+        x(n) = b(n) / U(n, n);
+        for i = n-1:-1:1
+            s = 0;
+            for j = i+1:n
+                s = s + U(i, j) * x(j);
+            end
+            x(i) = (b(i) - s) / U(i, i);
+        end
+    else
+        error("superior square matrix with determinant different than 0");
+    end
+    x = x(:);
+end
+
+forward([1 0 0; 1 -1 0; -2 1 -2], [1 0 -3])
+backward([1 0 0; 1 -1 0; -2 1 1], [1 0 -3])

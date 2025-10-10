@@ -149,9 +149,6 @@ function ok = isInvertible(A)
     end
 end
 
-A = [1 2 3; 0 5 6; 0 0 9];
-
-
 function x = forward(L, b)
     [n, m] = size(L);
     [isSq, isLower, isUpper] = checkMatrix(L);
@@ -167,10 +164,39 @@ function x = forward(L, b)
             x(i) = (b(i) - s) / L(i, i);
         end
     else
-        error("infirior or superior square matrix with determinant different than 0");
+        error("Matrix must be square, lower triangular, and invertible");
     end
     x = x(:);
 end
 
+function x = backward(U, b)
+    [n, m] = size(U);
+    [isSq, isLower, isUpper] = checkMatrix(U);
+    ok = isInvertible(U);
+    if isUpper && isSq && ok
+        x = zeros(n, 1);
+        x(n) = b(n) / U(n, n);
+        for i = n-1:-1:1
+            s = 0;
+            for j = i+1:n
+                s = s + U(i, j) * x(j);
+            end
+            x(i) = (b(i) - s) / U(i, i);
+        end
+    else
+        error("Matrix must be square, upper triangular, and invertible");
+    end
+    x = x(:);
+end
 
-forward([1 0 0;1 -1 0;-2 1 -2],[1 0 -3])
+function x = solveTriangular(A, b)
+    [~, ~, isUpper] = checkMatrix(A);
+    if isUpper
+        x = backward(A, b);
+    else
+        x = forward(A, b);
+    end
+end
+
+solveTriangular([1 0 0; 1 -1 0; -2 1 -2], [1 0 -3])
+solveTriangular([1 0 0; 1 -1 0; -2 1 1], [1 0 -3])
