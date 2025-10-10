@@ -112,8 +112,46 @@ function [isSquare, isLowerTri, isUpperTri] = checkMatrix(A)
     end
 end
 
+function ok = checkTriangular2(A)
+    [m,n] = size(A)
+    if m ~= n
+        ok = false;
+        return
+    end
+    isLower = true;
+    isUpper = true;
+    for i = 1:m
+        for j = 1:n
+            if j > i && A(i,j) ~= 0
+                isUpper = false;
+            end
+            if i > j && A(i,j) ~= 0
+                isLower = false;
+            end
+        end
+    end
+    ok = isLower || isUpper;
+end
+
+function ok = isInvertible(A)
+    m = length(A(:,1));
+    n = length(A(1,:));
+    if m ~= n
+        ok = false;
+        return
+    end
+    ok = true;
+    for i = 1:m
+        if A(i,i) == 0
+            ok = false;
+            return
+        end
+    end
+end
+
 A = [1 2 3; 0 5 6; 0 0 9];
 [isSq, isLower, isUpper] = checkMatrix(A)
+ok = isInvertible(A)
 
 %{fucntion x = forward(L,b)
 %}
