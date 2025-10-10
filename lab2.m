@@ -150,8 +150,27 @@ function ok = isInvertible(A)
 end
 
 A = [1 2 3; 0 5 6; 0 0 9];
-[isSq, isLower, isUpper] = checkMatrix(A)
-ok = isInvertible(A)
 
-%{fucntion x = forward(L,b)
-%}
+
+function x = forward(L, b)
+    [n, m] = size(L);
+    [isSq, isLower, isUpper] = checkMatrix(L);
+    ok = isInvertible(L);
+    if isLower && isSq && ok
+        x = zeros(n, 1);
+        x(1) = b(1) / L(1, 1);
+        for i = 2:n
+            s = 0;
+            for j = 1:i-1
+                s = s + L(i, j) * x(j);
+            end
+            x(i) = (b(i) - s) / L(i, i);
+        end
+    else
+        error("infirior or superior square matrix with determinant different than 0");
+    end
+    x = x(:);
+end
+
+
+forward([1 0 0;1 -1 0;-2 1 -2],[1 0 -3])
