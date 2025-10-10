@@ -32,14 +32,6 @@ function s = suma2(A)
 end
 
 function s = suma3(A)
-    s = 0;
-    [m,n] = size(A);
-    for i = 1:m
-        for j = 1:n
-            s = s + A(i,j);
-        end
-    end
-end 
+    for i = 
 suma1(A)
 suma2(A)
-suma3(A)
