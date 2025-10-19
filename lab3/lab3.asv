@@ -1,0 +1,7 @@
+function [L,U] = FactLU(A)
+[m,n] = size(A);
+L = eye(n)
+for k=1:n-1
+    if A(k,k) == 0
+        error('factorizarea nu poate fi facuta')
+        

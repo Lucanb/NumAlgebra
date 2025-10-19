@@ -1,0 +1,24 @@
+function x = forward(L, b)
+b=(:);
+[m,n] = size(L)
+if m != n
+    error('Matricea nu e patratica')
+end
+
+for i = 1:n
+    if L(i,i) == 0
+        error('Matricea nu e inversabila')
+    end
+end
+
+if n != length(b)
+    error('Matricea b nu corespunde cu L')
+end
+
+for i = 1:n
+    for j = i+1:n
+        if L(i,j) != 0
+            error('L nu e inferior triunghiulara')
+        end
+    end
+end

@@ -12,7 +12,7 @@ sum(sum(A));
 max(X);
 max(max(A));
 X>1;
-x(x>0) %ia elementele pozitive - la matrice daca faci la fel nu mai stie de unde sa ia si face vector
+X(X>0) %ia elementele pozitive - la matrice daca faci la fel nu mai stie de unde sa ia si face vector
 %{
  daca vreau matrice cu 1 s 0 iau pe col sau pe linii si aplic operatorul.
  for i = a : h : b %h e pasul si implicit daca nu am acel h o sa faca cu o pozitie   
