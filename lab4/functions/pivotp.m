@@ -1,7 +1,7 @@
 function [P, L, U] = pivotp(A)
 [m, n] = size(A);
 if m ~= n
-    error('Matricea trebuie sa fie patratica')
+    error('Matricea nu e patratica')
 end
 if n == 1
     P = 1;
