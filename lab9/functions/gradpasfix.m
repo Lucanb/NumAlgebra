@@ -1,14 +1,15 @@
-function x = gradpasfix(A, b, c, x0, t, tol)
+function [x, X] = gradpasfix(A, b, c, x0, t, tol)
 
     x = x0;
-    d = -2*A*x + 2*b;
-    k = 0;
+    d = -2*A*x - 2*b;
+
+    X = x;
+
     while sqrt(d' * d) >= tol
         x = x + t * d;
-        d = -2*A*x + 2*b;
-        k++;
+        X = [X x];
+        d = -2*A*x - 2*b;
     end
-    display(k);
-    display(x);
+
 end
 
