@@ -1,12 +1,16 @@
 function X = SolveLower_(L, B, unitDiag)
+% SolveLower_  Rezolva L*X = B prin substitutie directa.
+% unitDiag = true  -> diag(L)=1
+% unitDiag = false -> diag(L) generala
+
     [n, n2] = size(L);
     if n ~= n2
-        error('SolveLower_:LowerNotSquare', 'L trebuie sa fie patratica.');
+        error('LUBlocuriRecursiv:LowerNotSquare', 'Matricea L trebuie sa fie patratica.');
     end
 
     [nb, p] = size(B);
     if nb ~= n
-        error('SolveLower_:DimIncompat', 'Dimensiuni incompatibile: L si B.');
+        error('LUBlocuriRecursiv:DimIncompat', 'Dimensiuni incompatibile in SolveLower_.');
     end
 
     X = zeros(n, p);
@@ -23,7 +27,7 @@ function X = SolveLower_(L, B, unitDiag)
                 X(i,j) = rhs;
             else
                 if L(i,i) == 0
-                    error('SolveLower_:ZeroDiagLower', 'L(%d,%d)=0.', i, i);
+                    error('LUBlocuriRecursiv:ZeroDiagLower', 'L(%d,%d)=0 in SolveLower_.', i, i);
                 end
                 X(i,j) = rhs / L(i,i);
             end

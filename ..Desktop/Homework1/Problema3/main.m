@@ -30,7 +30,7 @@ disp(norm(L - L_expected, 'fro'));
 disp('||U - U_expected||_F =');
 disp(norm(U - U_expected, 'fro'));
 
-[Lb, Ub, Pb] = lu(A); %asta scoate matriciile fol functii din matlab
-disp('Verificare Matlab: ||Pb*A - Lb*Ub||_F =');
+[Lb, Ub, Pb] = lu(A);
+disp('Verificare built-in: ||Pb*A - Lb*Ub||_F =');
 disp(norm(Pb*A - Lb*Ub, 'fro'));
 

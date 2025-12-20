@@ -21,7 +21,7 @@ function [L, U] = LUDoolittle(A)
 
     L = eye(n);
     U = zeros(n);
-%aici voi calcula pe linii matricea U incepand de la U(k,k) --> coeficientii
+
     for k = 1:n
         for j = k:n
             s = 0;
@@ -31,17 +31,17 @@ function [L, U] = LUDoolittle(A)
             U(k, j) = A(k, j) - s;
         end
 
-        if U(k, k) == 0 %verific pivotul
+        if U(k, k) == 0
             error('LUDoolittle:PivotZero', ...
                   'Pivot zero la pasul k=%d. Metoda Doolittle fara pivotare nu se poate aplica.', k);
         end
 
-        for i = k+1:n %aici in partea a 2-a dupa ce aflu U - dupa linii, aflu L dupa coloane
+        for i = k+1:n
             s = 0;
             for p = 1:k-1
                 s = s + L(i, p) * U(p, k);
             end
-            L(i, k) = (A(i, k) - s) / U(k, k); % ca la elim gaussiene impart la coef ivotului
+            L(i, k) = (A(i, k) - s) / U(k, k);
         end
     end
 end

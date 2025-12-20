@@ -37,9 +37,9 @@ function x = SolutiePivotareTotala(A, b)
 
     [P, Q, L, U] = LUPivotareTotala(A);
 
-    rhs = P * b; % fac asta ca P - permutarii pe linii so cand permut linii din amtrice trb si sa permut liniile lui b ca sa am sistem echivalent
+    rhs = P * b;
 
-    y = zeros(n, 1); %Ok am rupt in 2 sisteme Ly = Pb --> determin acel y (L(Uz) = Pb, y = Uz => Ly=Pb) (L - matrice inf)
+    y = zeros(n, 1);
     for i = 1:n
         s = 0;
         for j = 1:i-1
@@ -48,8 +48,8 @@ function x = SolutiePivotareTotala(A, b)
         y(i) = rhs(i) - s;
     end
 
-    z = zeros(n, 1); %Uz = y --> aflu z
-    for i = n:-1:1 %Ok aici am Uz = y ---> determin acel z pentru care am y din sistemul 1. (matrice sup)
+    z = zeros(n, 1);
+    for i = n:-1:1
         s = 0;
         for j = i+1:n
             s = s + U(i, j) * z(j);
@@ -60,6 +60,6 @@ function x = SolutiePivotareTotala(A, b)
         z(i) = (y(i) - s) / U(i, i);
     end
 
-    x = Q * z; %analog - permut in Z ca am sistemul LUz = PAQz =Pb (x = Qz)
+    x = Q * z;
 end
 

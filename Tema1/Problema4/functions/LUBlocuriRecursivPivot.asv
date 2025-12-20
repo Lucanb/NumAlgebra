@@ -1,0 +1,102 @@
+function [L, U, P] = LUBlocuriRecursivPivot(A)
+% LUBlocuriRecursivPivot  Factorizare LU recursiva pe blocuri cu pivotare:
+%   P*A = L*U, unde:
+%     P - matrice de permutare (pivotare pe linii)
+%     L - inferior triunghiulara (diag=1)
+%     U - superior triunghiulara
+%
+% Observatie: foloseste pivotare (partial) pentru robustete numerica.
+
+    if nargin ~= 1
+        error('LUBlocuriRecursivPivot:NumarArgumente', 'Functia primeste exact un argument: A.');
+    end
+    if ~isnumeric(A) || ~ismatrix(A)
+        error('LUBlocuriRecursivPivot:TipInvalid', 'A trebuie sa fie o matrice numerica.');
+    end
+
+    [n, m] = size(A);
+    if n ~= m
+        error('LUBlocuriRecursivPivot:Dimensiuni', 'A trebuie sa fie patratica (n x n).');
+    end
+    if any(~isfinite(A(:)))
+        error('LUBlocuriRecursivPivot:ValoriInvalid', 'A contine NaN sau Inf.');
+    end
+
+    if n == 0
+        L = [];
+        U = [];
+        P = [];
+        return;
+    end
+
+    % Caz de baza: pentru dimensiuni mici, folosesc LU cu pivotare din MATLAB.
+    if n == 1
+        if A(1,1) == 0
+            error('LUBlocuriRecursivPivot:Singular', 'Pivot zero la n=1.');
+        end
+        P = 1;
+        L = 1;
+        U = A(1,1);
+        return;
+    end
+
+    if n == 2
+    % pivotare partiala pe coloana 1
+        if abs(A(2,1)) > abs(A(1,1))
+            P = [0 1; 1 0];
+            A = P * A;
+        else
+            P = eye(2);
+        end
+    
+        if A(1,1) == 0
+            error('LUBlocuriRecursivPivot:Singular', 'Pivot zero la n=2 dupa pivotare.');
+        end
+    
+        L = eye(2);
+        U = zeros(2);
+    
+        U(1,1) = A(1,1);
+        U(1,2) = A(1,2);
+    
+        L(2,1) = A(2,1) / U(1,1);
+        U(2,2) = A(2,2) - L(2,1) * U(1,2);
+    
+        return;
+    end
+
+    k = floor(n/2);
+
+    A11 = A(1:k,   1:k);
+    A12 = A(1:k,   k+1:n);
+    A21 = A(k+1:n, 1:k);
+    A22 = A(k+1:n, k+1:n);
+
+    [L11, U11, P1] = LUBlocuriRecursivPivot(A11);%Factorizez A11 cu pivotare: P1*A11 = L11*U11
+
+    A12p = P1 * A12; %permut liniile intai
+
+    U12 = SolveLower_(L11, A12p, true); %U12 din L11*U12 = A12p
+
+    L21 = SolveRightUpper_(U11, A21); %L21 din L21*U11 = A21  (rezolvare din dreapta)
+
+    % 5) Complement Schur
+    S = A22 - L21 * U12; %
+
+    % 6) Factorizez S cu pivotare: P2*S = L22*U22
+    [L22, U22, P2] = LUBlocuriRecursivPivot(S);
+
+    % 7) Pivotarea P2 afecteaza blocurile de jos: trebuie permutat L21
+    L21p = P2 * L21;
+
+    % 8) Permutarea globala: P = diag(P1, P2) * [I 0; 0 I] aplicata pe A
+    %    Dar atentie: P2 actioneaza numai pe blocul de jos (liniile k+1:n).
+    P = blkdiag(P1, P2);
+
+    % 9) Asamblez L si U
+    L = [L11,              zeros(k, n-k);
+         L21p,             L22];
+
+    U = [U11,              U12;
+         zeros(n-k, k),    U22];
+end
